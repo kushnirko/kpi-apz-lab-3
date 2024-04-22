@@ -117,7 +117,9 @@ func (pw *Visualizer) handleEvent(e any, t screen.Texture) {
 
 	case mouse.Event:
 		if t == nil {
-			// TODO: Реалізувати реакцію на натискання кнопки миші.
+			if e.Button == mouse.ButtonLeft && e.Direction == mouse.DirPress {
+				pw.drawDefaultUI(int(e.X), int(e.Y))
+			}
 		}
 
 	case paint.Event:
