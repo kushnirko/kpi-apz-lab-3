@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/roman-mazur/architecture-lab-3/scripts/client"
+	"kpi-apz-lab-3/scripts/client"
 	"net/http"
 	"time"
 )
