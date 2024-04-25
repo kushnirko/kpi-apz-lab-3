@@ -3,49 +3,47 @@ package painter
 import (
 	"github.com/roman-mazur/architecture-lab-3/ui"
 	"image/color"
-
-	"golang.org/x/exp/shiny/screen"
 )
 
-// Operation змінює вхідну текстуру.
+// Operation змінює вхідний стан вікна.
 type Operation interface {
-	// Do виконує зміну операції, повертаючи true, якщо текстура вважається готовою для відображення.
-	Do(t screen.Texture) (ready bool)
+	// Do виконує зміну операції, повертаючи true, якщо стан вікна уже можна використовувати для відображення.
+	Do(s ui.State) (ready bool)
 }
 
 // OperationList групує список операції в одну.
 type OperationList []Operation
 
-func (ol OperationList) Do(t screen.Texture) (ready bool) {
+func (ol OperationList) Do(s ui.State) (ready bool) {
 	for _, o := range ol {
-		ready = o.Do(t) || ready
+		ready = o.Do(s) || ready
 	}
 	return
 }
 
-// UpdateOp операція, яка не змінює текстуру, але сигналізує, що текстуру потрібно розглядати як готову.
+// UpdateOp операція, яка не змінює стану вікна, але сигналізує, що його потрібно розглядати як готового.
 var UpdateOp = updateOp{}
 
 type updateOp struct{}
 
-func (op updateOp) Do(t screen.Texture) bool { return true }
+func (op updateOp) Do(ui.State) bool { return true }
 
-// OperationFunc використовується для перетворення функції оновлення текстури в Operation.
-type OperationFunc func(t screen.Texture)
+// OperationFunc використовується для перетворення функції оновлення стану вікна в Operation.
+type OperationFunc func(ui.State)
 
-func (f OperationFunc) Do(t screen.Texture) bool {
-	f(t)
+func (f OperationFunc) Do(s ui.State) bool {
+	f(s)
 	return false
 }
 
-// WhiteFill зафарбовує текстуру у білий колір. Може бути використана як Operation через OperationFunc(WhiteFill).
-func WhiteFill(t screen.Texture) {
-	t.Fill(t.Bounds(), color.White, screen.Src)
+// WhiteFill встановлює колір фону вікна у білий. Може бути використана як Operation через OperationFunc(WhiteFill).
+func WhiteFill(s ui.State) {
+	s.Bg.C = color.White
 }
 
-// GreenFill зафарбовує текстуру у зелений колір. Може бути використана як Operation через OperationFunc(GreenFill).
-func GreenFill(t screen.Texture) {
-	t.Fill(t.Bounds(), color.RGBA{G: 0xff, A: 0xff}, screen.Src)
+// GreenFill встановлює колір фону вікна у зелений. Може бути використана як Operation через OperationFunc(GreenFill).
+func GreenFill(s ui.State) {
+	s.Bg.C = color.RGBA{G: 0xff, A: 0xff}
 }
 
 func BgRectDraw(s ui.State, x1, y1, x2, y2 float32) {
