@@ -20,7 +20,6 @@ func main() {
 	//pv.Debug = true
 	pv.Title = "Simple painter"
 
-	pv.OnScreenReady = opLoop.Start
 	opLoop.Receiver = &pv
 
 	go func() {
@@ -28,6 +27,7 @@ func main() {
 		_ = http.ListenAndServe("localhost:17000", nil)
 	}()
 
+	opLoop.Start()
 	pv.Main()
 	opLoop.StopAndWait()
 }

@@ -17,9 +17,8 @@ import (
 )
 
 type Visualizer struct {
-	Title         string
-	Debug         bool
-	OnScreenReady func()
+	Title string
+	Debug bool
 
 	w    screen.Window
 	g    chan Getter
@@ -54,10 +53,6 @@ func (pw *Visualizer) run(s screen.Screen) {
 		w.Release()
 		close(pw.done)
 	}()
-
-	if pw.OnScreenReady != nil {
-		pw.OnScreenReady()
-	}
 
 	pw.w = w
 
