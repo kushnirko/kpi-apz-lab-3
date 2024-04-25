@@ -61,7 +61,7 @@ func FiguresMove(s ui.State, x, y float32) {
 	}
 }
 
-func TextureStateReset(s ui.State) {
+func UiStateReset(s ui.State) {
 	s.Bg.C = color.Black
 	s.Br = nil
 	s.Fgs = nil
