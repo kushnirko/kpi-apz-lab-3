@@ -137,28 +137,8 @@ func (pw *Visualizer) handleEvent(e any, st *State) {
 }
 
 func (pw *Visualizer) drawDefaultUI(centerX, centerY int) {
-	pw.w.Fill(pw.sz.Bounds(), color.Black, draw.Src) // Фон.
-
-	redColor := color.RGBA{R: 255, A: 255}
-
-	horizontalRectWidth := 400
-	horizontalRectHeight := 150
-	verticalRectWidth := 130
-	verticalRectHeight := 170
-
-	horizontalRectX1 := centerX - horizontalRectWidth/2
-	horizontalRectY1 := centerY - horizontalRectHeight
-	horizontalRectX2 := centerX + horizontalRectWidth/2
-	horizontalRectY2 := centerY
-	horizontalRect := image.Rect(horizontalRectX1, horizontalRectY1, horizontalRectX2, horizontalRectY2)
-	pw.w.Fill(horizontalRect, redColor, draw.Src)
-
-	verticalRectX1 := centerX - verticalRectWidth/2
-	verticalRectY1 := centerY
-	verticalRectX2 := centerX + verticalRectWidth/2
-	verticalRectY2 := centerY + verticalRectHeight
-	verticalRect := image.Rect(verticalRectX1, verticalRectY1, verticalRectX2, verticalRectY2)
-	pw.w.Fill(verticalRect, redColor, draw.Src)
+	pw.fillBg(color.Black)
+	pw.drawFigure(centerX, centerY)
 
 	// Малювання білої рамки.
 	for _, br := range imageutil.Border(pw.sz.Bounds(), 10) {
