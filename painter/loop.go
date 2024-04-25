@@ -7,7 +7,7 @@ import (
 
 // Receiver отримує стан вікна, що був підготовлений в результаті виконання команд у циклі подій.
 type Receiver interface {
-	Update(st ui.State)
+	Update(ui.Getter)
 }
 
 // Loop реалізує цикл подій для формування стану вікна через виконання операцій, отриманих із внутрішньої черги.
@@ -24,6 +24,8 @@ type Loop struct {
 
 // Start запускає цикл подій. Цей метод потрібно запустити до того, як викликати на ньому будь-які інші методи.
 func (l *Loop) Start() {
+	l.st = ui.InitState()
+
 	l.stop = make(chan struct{})
 
 	go func() {
@@ -44,7 +46,7 @@ func (l *Loop) Post(op Operation) {
 
 // StopAndWait сигналізує про необхідність завершити цикл та блокується до моменту його повної зупинки.
 func (l *Loop) StopAndWait() {
-	l.Post(OperationFunc(func(ui.State) {
+	l.Post(OperationFunc(func(ui.Setter) {
 		l.stopReq = true
 	}))
 	<-l.stop

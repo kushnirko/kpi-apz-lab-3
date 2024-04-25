@@ -22,7 +22,7 @@ type Visualizer struct {
 	OnScreenReady func()
 
 	w    screen.Window
-	st   chan State
+	g    chan Getter
 	done chan struct{}
 
 	sz  size.Event
@@ -30,15 +30,15 @@ type Visualizer struct {
 }
 
 func (pw *Visualizer) Main() {
-	pw.st = make(chan State)
+	pw.g = make(chan Getter)
 	pw.done = make(chan struct{})
 	pw.pos.Max.X = 200
 	pw.pos.Max.Y = 200
 	driver.Main(pw.run)
 }
 
-func (pw *Visualizer) Update(st State) {
-	pw.st <- st
+func (pw *Visualizer) Update(g Getter) {
+	pw.g <- g
 }
 
 func (pw *Visualizer) run(s screen.Screen) {
@@ -76,7 +76,7 @@ func (pw *Visualizer) run(s screen.Screen) {
 		}
 	}()
 
-	var st State
+	var g Getter
 
 	for {
 		select {
@@ -84,9 +84,9 @@ func (pw *Visualizer) run(s screen.Screen) {
 			if !ok {
 				return
 			}
-			pw.handleEvent(e, &st)
+			pw.handleEvent(e, g)
 
-		case st = <-pw.st:
+		case g = <-pw.g:
 			w.Send(paint.Event{})
 		}
 	}
@@ -106,7 +106,7 @@ func detectTerminate(e any) bool {
 	return false
 }
 
-func (pw *Visualizer) handleEvent(e any, st *State) {
+func (pw *Visualizer) handleEvent(e any, g Getter) {
 	switch e := e.(type) {
 
 	case size.Event: // Оновлення даних про розмір вікна.
@@ -116,7 +116,7 @@ func (pw *Visualizer) handleEvent(e any, st *State) {
 		log.Printf("ERROR: %s", e)
 
 	case mouse.Event:
-		if st == nil {
+		if g == nil {
 			if e.Button == mouse.ButtonLeft && e.Direction == mouse.DirPress {
 				pw.drawDefaultUI(int(e.X), int(e.Y))
 			}
@@ -124,13 +124,13 @@ func (pw *Visualizer) handleEvent(e any, st *State) {
 
 	case paint.Event:
 		// Малювання контенту вікна.
-		if st == nil {
+		if g == nil {
 			centerX := pw.sz.Bounds().Dx() / 2
 			centerY := pw.sz.Bounds().Dy() / 2
 			pw.drawDefaultUI(centerX, centerY)
 		} else {
 			// Використання текстури отриманої через виклик Update.
-			pw.drawUI(st)
+			pw.drawUI(g)
 		}
 		pw.w.Publish()
 	}
@@ -180,16 +180,16 @@ func (pw *Visualizer) drawFigure(x, y int) {
 	pw.w.Fill(vRect, c, draw.Src)
 }
 
-func (pw *Visualizer) drawUI(st *State) {
-	pw.fillBg(st.Bg.C)
+func (pw *Visualizer) drawUI(g Getter) {
+	pw.fillBg(g.GetBg().C)
 
-	if br := st.Br; br != nil {
+	if br := g.GetBr(); br != nil {
 		x1, y1 := pw.transformRelPoint(br.X1, br.Y1)
 		x2, y2 := pw.transformRelPoint(br.X2, br.Y2)
 		pw.drawBgRect(x1, y1, x2, y2)
 	}
 
-	for _, f := range st.Fgs {
+	for _, f := range g.GetFgs() {
 		x, y := pw.transformRelPoint(f.X, f.Y)
 		pw.drawFigure(x, y)
 	}

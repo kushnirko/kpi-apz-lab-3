@@ -60,20 +60,20 @@ func parseCmd(cmd string) (painter.Operation, error) {
 		},
 		"bgrect": {
 			painter.BgRectDraw,
-			painter.OperationFunc(func(st ui.State) {
-				painter.BgRectDraw(st, args[0], args[1], args[2], args[3])
+			painter.OperationFunc(func(s ui.Setter) {
+				painter.BgRectDraw(s, args[0], args[1], args[2], args[3])
 			}),
 		},
 		"figure": {
 			painter.FigureDraw,
-			painter.OperationFunc(func(st ui.State) {
-				painter.FigureDraw(st, args[0], args[1])
+			painter.OperationFunc(func(s ui.Setter) {
+				painter.FigureDraw(s, args[0], args[1])
 			}),
 		},
 		"move": {
 			painter.FiguresMove,
-			painter.OperationFunc(func(st ui.State) {
-				painter.FiguresMove(st, args[0], args[1])
+			painter.OperationFunc(func(s ui.Setter) {
+				painter.FiguresMove(s, args[0], args[1])
 			}),
 		},
 		"reset": {
