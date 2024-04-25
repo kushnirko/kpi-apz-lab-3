@@ -5,12 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"kpi-apz-lab-3/ui"
 	"reflect"
 	"strconv"
 	"strings"
 
 	"kpi-apz-lab-3/painter"
+	"kpi-apz-lab-3/ui"
 )
 
 // Parser уміє прочитати дані з вхідного io.Reader та повернути список операцій представлені вхідним скриптом.
@@ -83,6 +83,9 @@ func parseCmd(cmd string) (painter.Operation, error) {
 	}
 
 	h := cmdMapper[name].handler
+	if h == nil {
+		return nil, fmt.Errorf("unknown command name: %s", name)
+	}
 	if err = checkArgsNum(args, h); err != nil {
 		return nil, err
 	}
@@ -108,7 +111,7 @@ func parseCmdArgs(args []string) ([]float32, error) {
 
 func checkArgsNum(args []float32, f interface{}) error {
 	paramsNum := reflect.TypeOf(f).NumIn()
-	if len(args) != paramsNum-1 { // -1 because of ui.State param
+	if len(args) != paramsNum-1 { // -1 because of ui.Setter param
 		err := errors.New("wrong number of arguments")
 		return err
 	}

@@ -86,8 +86,6 @@ type State interface {
 }
 
 func InitState() State {
-	sd := StateData{
-		Bg: &Background{C: color.Black},
-	}
+	sd := StateData{Bg: &Background{C: color.Black}}
 	return &sd
 }

@@ -2,13 +2,14 @@ package painter
 
 import (
 	"image/color"
+
 	"kpi-apz-lab-3/ui"
 )
 
 // Operation змінює вхідний стан вікна.
 type Operation interface {
 	// Do виконує зміну операції, повертаючи true, якщо стан вікна уже можна використовувати для відображення.
-	Do(ui.Setter) (ready bool)
+	Do(ui.Setter) bool
 }
 
 // OperationList групує список операції в одну.

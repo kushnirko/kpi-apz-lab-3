@@ -1,8 +1,9 @@
 package painter
 
 import (
-	"kpi-apz-lab-3/ui"
 	"sync"
+
+	"kpi-apz-lab-3/ui"
 )
 
 // Receiver отримує стан вікна, що був підготовлений в результаті виконання команд у циклі подій.
