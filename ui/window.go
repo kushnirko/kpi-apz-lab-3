@@ -130,7 +130,7 @@ func (pw *Visualizer) handleEvent(e any, st *State) {
 			pw.drawDefaultUI(centerX, centerY)
 		} else {
 			// Використання текстури отриманої через виклик Update.
-			pw.DrawUi(st)
+			pw.drawUI(st)
 		}
 		pw.w.Publish()
 	}
@@ -166,24 +166,24 @@ func (pw *Visualizer) drawDefaultUI(centerX, centerY int) {
 	}
 }
 
-func (pw *Visualizer) TransformRelPoint(relX, relY float32) (int, int) { // rel - relative
+func (pw *Visualizer) transformRelPoint(relX, relY float32) (int, int) { // rel - relative
 	s := pw.sz.Size()
 	x := int(relX * float32(s.X))
 	y := int(relY * float32(s.Y))
 	return x, y
 }
 
-func (pw *Visualizer) FillBg(c color.Color) {
+func (pw *Visualizer) fillBg(c color.Color) {
 	pw.w.Fill(pw.sz.Bounds(), c, draw.Src)
 }
 
-func (pw *Visualizer) DrawBgRect(x1, y1, x2, y2 int) {
+func (pw *Visualizer) drawBgRect(x1, y1, x2, y2 int) {
 	c := color.Black
 	rect := image.Rect(x1, y1, x2, y2)
 	pw.w.Fill(rect, c, draw.Src)
 }
 
-func (pw *Visualizer) DrawFigure(x, y int) {
+func (pw *Visualizer) drawFigure(x, y int) {
 	c := color.RGBA{R: 0xff, A: 0xff}
 
 	// h - horizontal, v - vertical
@@ -200,17 +200,17 @@ func (pw *Visualizer) DrawFigure(x, y int) {
 	pw.w.Fill(vRect, c, draw.Src)
 }
 
-func (pw *Visualizer) DrawUi(st *State) {
-	pw.FillBg(st.Bg.C)
+func (pw *Visualizer) drawUI(st *State) {
+	pw.fillBg(st.Bg.C)
 
 	if br := st.Br; br != nil {
-		x1, y1 := pw.TransformRelPoint(br.X1, br.Y1)
-		x2, y2 := pw.TransformRelPoint(br.X2, br.Y2)
-		pw.DrawBgRect(x1, y1, x2, y2)
+		x1, y1 := pw.transformRelPoint(br.X1, br.Y1)
+		x2, y2 := pw.transformRelPoint(br.X2, br.Y2)
+		pw.drawBgRect(x1, y1, x2, y2)
 	}
 
 	for _, f := range st.Fgs {
-		x, y := pw.TransformRelPoint(f.X, f.Y)
-		pw.DrawFigure(x, y)
+		x, y := pw.transformRelPoint(f.X, f.Y)
+		pw.drawFigure(x, y)
 	}
 }

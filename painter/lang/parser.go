@@ -37,16 +37,16 @@ func parseCmd(cmd string) painter.Operation {
 		"white":  painter.OperationFunc(painter.WhiteFill),
 		"green":  painter.OperationFunc(painter.GreenFill),
 		"update": painter.UpdateOp,
-		"bgrect": painter.OperationFunc(func(s ui.State) {
-			painter.BgRectDraw(s, args[0], args[1], args[2], args[3])
+		"bgrect": painter.OperationFunc(func(st ui.State) {
+			painter.BgRectDraw(st, args[0], args[1], args[2], args[3])
 		}),
-		"figure": painter.OperationFunc(func(s ui.State) {
-			painter.FigureDraw(s, args[0], args[1])
+		"figure": painter.OperationFunc(func(st ui.State) {
+			painter.FigureDraw(st, args[0], args[1])
 		}),
-		"move": painter.OperationFunc(func(s ui.State) {
-			painter.FiguresMove(s, args[0], args[1])
+		"move": painter.OperationFunc(func(st ui.State) {
+			painter.FiguresMove(st, args[0], args[1])
 		}),
-		"reset": painter.OperationFunc(painter.UiStateReset),
+		"reset": painter.OperationFunc(painter.UIStateReset),
 	}[name]
 }
 

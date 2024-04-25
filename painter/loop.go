@@ -7,14 +7,14 @@ import (
 
 // Receiver отримує стан вікна, що був підготовлений в результаті виконання команд у циклі подій.
 type Receiver interface {
-	Update(s ui.State)
+	Update(st ui.State)
 }
 
 // Loop реалізує цикл подій для формування стану вікна через виконання операцій, отриманих із внутрішньої черги.
 type Loop struct {
 	Receiver Receiver
 
-	s ui.State
+	st ui.State
 
 	mq messageQueue
 
@@ -29,8 +29,8 @@ func (l *Loop) Start() {
 	go func() {
 		for !l.stopReq || !l.mq.empty() {
 			op := l.mq.pull()
-			if update := op.Do(l.s); update {
-				l.Receiver.Update(l.s)
+			if update := op.Do(l.st); update {
+				l.Receiver.Update(l.st)
 			}
 		}
 		close(l.stop)
