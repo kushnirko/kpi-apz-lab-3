@@ -3,9 +3,9 @@ package main
 import (
 	"net/http"
 
-	"github.com/roman-mazur/architecture-lab-3/painter"
-	"github.com/roman-mazur/architecture-lab-3/painter/lang"
-	"github.com/roman-mazur/architecture-lab-3/ui"
+	"kpi-apz-lab-3/painter"
+	"kpi-apz-lab-3/painter/lang"
+	"kpi-apz-lab-3/ui"
 )
 
 func main() {

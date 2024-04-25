@@ -2,12 +2,12 @@ package lang
 
 import (
 	"bufio"
-	"github.com/roman-mazur/architecture-lab-3/ui"
 	"io"
+	"kpi-apz-lab-3/ui"
 	"strconv"
 	"strings"
 
-	"github.com/roman-mazur/architecture-lab-3/painter"
+	"kpi-apz-lab-3/painter"
 )
 
 // Parser уміє прочитати дані з вхідного io.Reader та повернути список операцій представлені вхідним скриптом.

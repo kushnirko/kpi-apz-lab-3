@@ -1,7 +1,7 @@
 package painter
 
 import (
-	"github.com/roman-mazur/architecture-lab-3/ui"
+	"kpi-apz-lab-3/ui"
 	"sync"
 )
 

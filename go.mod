@@ -1,4 +1,4 @@
-module github.com/roman-mazur/architecture-lab-3
+module kpi-apz-lab-3
 
 go 1.22
 

@@ -1,8 +1,8 @@
 package painter
 
 import (
-	"github.com/roman-mazur/architecture-lab-3/ui"
 	"image/color"
+	"kpi-apz-lab-3/ui"
 )
 
 // Operation змінює вхідний стан вікна.
