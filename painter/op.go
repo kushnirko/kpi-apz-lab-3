@@ -1,6 +1,7 @@
 package painter
 
 import (
+	"github.com/roman-mazur/architecture-lab-3/ui"
 	"image/color"
 
 	"golang.org/x/exp/shiny/screen"
@@ -45,4 +46,25 @@ func WhiteFill(t screen.Texture) {
 // GreenFill зафарбовує текстуру у зелений колір. Може бути використана як Operation через OperationFunc(GreenFill).
 func GreenFill(t screen.Texture) {
 	t.Fill(t.Bounds(), color.RGBA{G: 0xff, A: 0xff}, screen.Src)
+}
+
+func BgRectDraw(s ui.State, x1, y1, x2, y2 float32) {
+	s.Br.X1, s.Br.Y1, s.Br.X2, s.Br.Y2 = x1, y1, x2, y2
+}
+
+func FigureDraw(s ui.State, x, y float32) {
+	f := ui.Figure{X: x, Y: y}
+	s.Fgs = append(s.Fgs, &f)
+}
+
+func FiguresMove(s ui.State, x, y float32) {
+	for _, f := range s.Fgs {
+		f.X, f.Y = x, y
+	}
+}
+
+func TextureStateReset(s ui.State) {
+	s.Bg.C = color.Black
+	s.Br = nil
+	s.Fgs = nil
 }
