@@ -19,10 +19,10 @@ import (
 type Visualizer struct {
 	Title         string
 	Debug         bool
-	OnScreenReady func(s screen.Screen)
+	OnScreenReady func()
 
 	w    screen.Window
-	tx   chan screen.Texture
+	st   chan State
 	done chan struct{}
 
 	sz  size.Event
@@ -30,15 +30,15 @@ type Visualizer struct {
 }
 
 func (pw *Visualizer) Main() {
-	pw.tx = make(chan screen.Texture)
+	pw.st = make(chan State)
 	pw.done = make(chan struct{})
 	pw.pos.Max.X = 200
 	pw.pos.Max.Y = 200
 	driver.Main(pw.run)
 }
 
-func (pw *Visualizer) Update(t screen.Texture) {
-	pw.tx <- t
+func (pw *Visualizer) Update(st State) {
+	pw.st <- st
 }
 
 func (pw *Visualizer) run(s screen.Screen) {
@@ -56,7 +56,7 @@ func (pw *Visualizer) run(s screen.Screen) {
 	}()
 
 	if pw.OnScreenReady != nil {
-		pw.OnScreenReady(s)
+		pw.OnScreenReady()
 	}
 
 	pw.w = w
@@ -76,7 +76,7 @@ func (pw *Visualizer) run(s screen.Screen) {
 		}
 	}()
 
-	var t screen.Texture
+	var st State
 
 	for {
 		select {
@@ -84,9 +84,9 @@ func (pw *Visualizer) run(s screen.Screen) {
 			if !ok {
 				return
 			}
-			pw.handleEvent(e, t)
+			pw.handleEvent(e, &st)
 
-		case t = <-pw.tx:
+		case st = <-pw.st:
 			w.Send(paint.Event{})
 		}
 	}
@@ -106,7 +106,7 @@ func detectTerminate(e any) bool {
 	return false
 }
 
-func (pw *Visualizer) handleEvent(e any, t screen.Texture) {
+func (pw *Visualizer) handleEvent(e any, st *State) {
 	switch e := e.(type) {
 
 	case size.Event: // Оновлення даних про розмір вікна.
@@ -116,7 +116,7 @@ func (pw *Visualizer) handleEvent(e any, t screen.Texture) {
 		log.Printf("ERROR: %s", e)
 
 	case mouse.Event:
-		if t == nil {
+		if st == nil {
 			if e.Button == mouse.ButtonLeft && e.Direction == mouse.DirPress {
 				pw.drawDefaultUI(int(e.X), int(e.Y))
 			}
@@ -124,13 +124,13 @@ func (pw *Visualizer) handleEvent(e any, t screen.Texture) {
 
 	case paint.Event:
 		// Малювання контенту вікна.
-		if t == nil {
+		if st == nil {
 			centerX := pw.sz.Bounds().Dx() / 2
 			centerY := pw.sz.Bounds().Dy() / 2
 			pw.drawDefaultUI(centerX, centerY)
 		} else {
 			// Використання текстури отриманої через виклик Update.
-			pw.w.Scale(pw.sz.Bounds(), t, t.Bounds(), draw.Src, nil)
+			pw.DrawUi(st)
 		}
 		pw.w.Publish()
 	}
@@ -163,5 +163,54 @@ func (pw *Visualizer) drawDefaultUI(centerX, centerY int) {
 	// Малювання білої рамки.
 	for _, br := range imageutil.Border(pw.sz.Bounds(), 10) {
 		pw.w.Fill(br, color.White, draw.Src)
+	}
+}
+
+func (pw *Visualizer) TransformRelPoint(relX, relY float32) (int, int) { // rel - relative
+	s := pw.sz.Size()
+	x := int(relX * float32(s.X))
+	y := int(relY * float32(s.Y))
+	return x, y
+}
+
+func (pw *Visualizer) FillBg(c color.Color) {
+	pw.w.Fill(pw.sz.Bounds(), c, draw.Src)
+}
+
+func (pw *Visualizer) DrawBgRect(x1, y1, x2, y2 int) {
+	c := color.Black
+	rect := image.Rect(x1, y1, x2, y2)
+	pw.w.Fill(rect, c, draw.Src)
+}
+
+func (pw *Visualizer) DrawFigure(x, y int) {
+	c := color.RGBA{R: 0xff, A: 0xff}
+
+	// h - horizontal, v - vertical
+	// W - width, H - height
+	hRectW := 400
+	hRectH := 150
+	vRectW := 130
+	vRectH := 170
+
+	hRect := image.Rect(x-hRectW/2, y-hRectH, x+hRectW/2, y)
+	pw.w.Fill(hRect, c, draw.Src)
+
+	vRect := image.Rect(x-vRectW/2, y, x+vRectW/2, y+vRectH)
+	pw.w.Fill(vRect, c, draw.Src)
+}
+
+func (pw *Visualizer) DrawUi(st *State) {
+	pw.FillBg(st.Bg.C)
+
+	if br := st.Br; br != nil {
+		x1, y1 := pw.TransformRelPoint(br.X1, br.Y1)
+		x2, y2 := pw.TransformRelPoint(br.X2, br.Y2)
+		pw.DrawBgRect(x1, y1, x2, y2)
+	}
+
+	for _, f := range st.Fgs {
+		x, y := pw.TransformRelPoint(f.X, f.Y)
+		pw.DrawFigure(x, y)
 	}
 }
