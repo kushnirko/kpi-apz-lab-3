@@ -11,7 +11,7 @@ func main() {
 	Client := &http.Client{}
 	method := "POST"
 	url := "http://localhost:17000/"
-	cmds := "green\nfigure 0.0 0.0\n"
+	cmds := "reset\ngreen\nfigure 0.0 0.0\n"
 	delay := 1 * time.Second
 	delta := 0.2
 	x := 0.0

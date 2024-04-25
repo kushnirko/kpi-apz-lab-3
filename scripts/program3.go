@@ -12,7 +12,7 @@ func main() {
 	url := "http://localhost:17000/"
 	delay := 2 * time.Second
 
-	client.SendMessage(Client, method, url, "figure 0.0 0.0\n")
+	client.SendMessage(Client, method, url, "reset\nfigure 0.0 0.0\n")
 	time.Sleep(delay)
 
 	client.SendMessage(Client, method, url, "figure 0.0 1.0\n")
