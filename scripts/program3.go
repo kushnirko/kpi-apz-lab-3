@@ -21,6 +21,6 @@ func main() {
 	client.SendMessage(Client, method, url, "figure 1.0 0.0\n")
 	time.Sleep(delay)
 
-	client.SendMessage(Client, method, url, "figure 1.0 1.0\n")
+	client.SendMessage(Client, method, url, "figure 1.0 1.0\nupdate\n")
 
 }
