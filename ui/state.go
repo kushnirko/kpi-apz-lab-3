@@ -66,7 +66,7 @@ func (sd *StateData) GetFgs() []*Figure {
 	return fgs
 }
 
-type Setter interface {
+type StateSetter interface {
 	SetBgColor(c color.Color)
 	SetBr(br BackgroundRectangle)
 	AddFg(fg Figure)
@@ -74,15 +74,15 @@ type Setter interface {
 	Reset()
 }
 
-type Getter interface {
+type StateGetter interface {
 	GetBg() *Background
 	GetBr() *BackgroundRectangle
 	GetFgs() []*Figure
 }
 
 type State interface {
-	Setter
-	Getter
+	StateSetter
+	StateGetter
 }
 
 func InitState() State {

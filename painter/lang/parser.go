@@ -60,19 +60,19 @@ func parseCmd(cmd string) (painter.Operation, error) {
 		},
 		"bgrect": {
 			painter.BgRectDraw,
-			painter.OperationFunc(func(s ui.Setter) {
+			painter.OperationFunc(func(s ui.StateSetter) {
 				painter.BgRectDraw(s, args[0], args[1], args[2], args[3])
 			}),
 		},
 		"figure": {
 			painter.FigureDraw,
-			painter.OperationFunc(func(s ui.Setter) {
+			painter.OperationFunc(func(s ui.StateSetter) {
 				painter.FigureDraw(s, args[0], args[1])
 			}),
 		},
 		"move": {
 			painter.FiguresMove,
-			painter.OperationFunc(func(s ui.Setter) {
+			painter.OperationFunc(func(s ui.StateSetter) {
 				painter.FiguresMove(s, args[0], args[1])
 			}),
 		},
@@ -111,7 +111,7 @@ func parseCmdArgs(args []string) ([]float32, error) {
 
 func checkArgsNum(args []float32, f interface{}) error {
 	paramsNum := reflect.TypeOf(f).NumIn()
-	if len(args) != paramsNum-1 { // -1 because of ui.Setter param
+	if len(args) != paramsNum-1 { // -1 because of ui.StateSetter param
 		err := errors.New("wrong number of arguments")
 		return err
 	}

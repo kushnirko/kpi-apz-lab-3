@@ -21,7 +21,7 @@ type Visualizer struct {
 	Debug bool
 
 	w    screen.Window
-	g    chan Getter
+	g    chan StateGetter
 	done chan struct{}
 
 	sz  size.Event
@@ -29,14 +29,14 @@ type Visualizer struct {
 }
 
 func (pw *Visualizer) Main() {
-	pw.g = make(chan Getter)
+	pw.g = make(chan StateGetter)
 	pw.done = make(chan struct{})
 	pw.pos.Max.X = 200
 	pw.pos.Max.Y = 200
 	driver.Main(pw.run)
 }
 
-func (pw *Visualizer) Update(g Getter) {
+func (pw *Visualizer) Update(g StateGetter) {
 	pw.g <- g
 }
 
@@ -71,7 +71,7 @@ func (pw *Visualizer) run(s screen.Screen) {
 		}
 	}()
 
-	var g Getter
+	var g StateGetter
 
 	for {
 		select {
@@ -101,7 +101,7 @@ func detectTerminate(e any) bool {
 	return false
 }
 
-func (pw *Visualizer) handleEvent(e any, g Getter) {
+func (pw *Visualizer) handleEvent(e any, g StateGetter) {
 	switch e := e.(type) {
 
 	case size.Event: // Оновлення даних про розмір вікна.
@@ -175,7 +175,7 @@ func (pw *Visualizer) drawFigure(x, y int) {
 	pw.w.Fill(vRect, c, draw.Src)
 }
 
-func (pw *Visualizer) drawUI(g Getter) {
+func (pw *Visualizer) drawUI(g StateGetter) {
 	pw.fillBg(g.GetBg().C)
 
 	if br := g.GetBr(); br != nil {

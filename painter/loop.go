@@ -8,7 +8,7 @@ import (
 
 // Receiver отримує стан вікна, що був підготовлений в результаті виконання команд у циклі подій.
 type Receiver interface {
-	Update(ui.Getter)
+	Update(ui.StateGetter)
 }
 
 // Loop реалізує цикл подій для формування стану вікна через виконання операцій, отриманих із внутрішньої черги.
@@ -47,7 +47,7 @@ func (l *Loop) Post(op Operation) {
 
 // StopAndWait сигналізує про необхідність завершити цикл та блокується до моменту його повної зупинки.
 func (l *Loop) StopAndWait() {
-	l.Post(OperationFunc(func(ui.Setter) {
+	l.Post(OperationFunc(func(ui.StateSetter) {
 		l.stopReq = true
 	}))
 	<-l.stop
