@@ -99,10 +99,10 @@ func parseCmdArgs(args []string) ([]float32, error) {
 	for i, str := range args {
 		num, err := strconv.ParseFloat(str, 32)
 		if err != nil {
-			return nil, fmt.Errorf("agrument %s is not float", str)
+			return nil, fmt.Errorf("argument %s is not float", str)
 		}
 		if num < 0.0 || num > 1.0 {
-			return nil, fmt.Errorf("agrument %s is not relative value (it can be in [0.0, 1.0])", str)
+			return nil, fmt.Errorf("argument %s is not relative value (it can be in [0.0, 1.0])", str)
 		}
 		res[i] = float32(num)
 	}
