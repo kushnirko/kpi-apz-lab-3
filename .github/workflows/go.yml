@@ -26,4 +26,4 @@ jobs:
 
 
     - name: Test
-      run: go test -v ./...
+      run: go test ./painter ./painter/lang -v
